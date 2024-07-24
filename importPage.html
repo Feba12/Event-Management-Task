@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Import Screen</title>
+    <link rel="stylesheet" href="importStyles.css" />
+  </head>
+  <body>
+    <div class="headingBanner">
+      <div class="logo-section">
+        <div class="logo-image">
+          <img src="./assets/logo.png" alt="Logo" />
+        </div>
+        <div class="logo-name"><h1>Event Management</h1></div>
+      </div>
+      <div class="listings-navigation">
+        <div class="event-navigation">Event Listings</div>
+        <div class="task-navigation">Task Listings</div>
+      </div>
+    </div>
+    <div class="main-content">
+      <div class="import-outer-section">
+        <h2>UPLOAD YOUR FILES HERE</h2>
+        <div class="import-inner-section">
+          <div class="selection-section">
+            <p>Select File Type:</p>
+            <select name="file-type" id="csv-input-type">
+              <option value="Event">Event</option>
+              <option value="Task">Task</option>
+            </select>
+          </div>
+          <div class="import-section">
+            <div class="import-screen">
+              <input type="file" id="csv-input" accept=".csv" />
+            </div>
+            <div class="submit-button">
+              <button onclick="readFile()">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="snackbar"></div>
+    <script src="script.js"></script>
+  </body>
+</html>

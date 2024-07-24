@@ -1,0 +1,33 @@
+* {
+    margin: 0;
+  }
+  
+  html,
+  body {
+    height: 100%;
+    width: 100%;
+  }
+  
+  .headingBanner,
+  .logo-section,
+  .logo-image,
+  .logo-name {
+    display: inline-block;
+  }
+  
+  .logo-image,
+  .logo-name,
+  .listings-navigation {
+    vertical-align: middle;
+  }
+  
+  .logo-image,
+  .logo-image img {
+    width: 90px;
+    height: 90px;
+  }
+
+  .headingBanner {
+    width: 100%;
+    background-color: rgb(240, 147, 136);
+  }

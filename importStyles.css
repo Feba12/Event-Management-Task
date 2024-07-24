@@ -1,0 +1,138 @@
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.headingBanner,
+.logo-section,
+.logo-image,
+.logo-name,
+.listings-navigation,
+.event-navigation,
+.task-navigation,
+.selection-section p {
+  display: inline-block;
+}
+
+.logo-image,
+.logo-name,
+.listings-navigation {
+  vertical-align: middle;
+}
+
+.logo-image,
+.logo-image img {
+  width: 90px;
+  height: 90px;
+}
+
+.listings-navigation {
+  width: calc(100% - 730px);
+  text-align: center;
+}
+
+.event-navigation,
+.task-navigation {
+  padding: 10px;
+  margin: 20px;
+  font-size: 20px;
+}
+
+.headingBanner {
+  width: 100%;
+  background-color: rgb(240, 147, 136);
+}
+
+.main-content {
+  background-color: rgb(250, 234, 233);
+  text-align: center;
+  height: calc(100% - 100px);
+  margin-top: 10px;
+  position: relative;
+}
+
+.import-outer-section {
+  padding: 20px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.import-inner-section {
+  border: 1px dashed;
+  border-radius: 5px;
+  background-color: azure;
+  padding: 20px;
+  vertical-align: middle;
+  text-align: center;
+  width: 800px;
+  height: 600px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.selection-section {
+  padding: 20px;
+  vertical-align: middle;
+  text-align: center;
+}
+
+.import-section {
+  text-align: center;
+}
+
+.submit-button button {
+  margin: 5px;
+  padding: 10px;
+  border: 1px solid;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+#snackbar {
+  visibility: hidden;
+  min-width: 250px;
+  margin-left: -125px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  left: 50%;
+  bottom: 30px;
+  font-size: 17px;
+}
+
+#snackbar.show {
+  visibility: visible;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from {
+    bottom: 0;
+    opacity: 0;
+  }
+  to {
+    bottom: 30px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    bottom: 30px;
+    opacity: 1;
+  }
+  to {
+    bottom: 0;
+    opacity: 0;
+  }
+}

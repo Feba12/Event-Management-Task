@@ -1,0 +1,87 @@
+* {
+  margin: 0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+}
+
+.headingBanner,
+.logo-section,
+.logo-image,
+.logo-name,
+.listings-navigation,
+.home-navigation,
+.task-navigation {
+  display: inline-block;
+}
+
+.logo-image,
+.logo-name,
+.listings-navigation {
+  vertical-align: middle;
+}
+
+.logo-image,
+.logo-image img {
+  width: 90px;
+  height: 90px;
+}
+
+.listings-navigation {
+  width: calc(100% - 730px);
+  text-align: center;
+}
+
+.home-navigation,
+.task-navigation {
+  padding: 10px;
+  margin: 20px;
+  font-size: 20px;
+}
+
+.headingBanner {
+  width: 100%;
+  background-color: rgb(240, 147, 136);
+}
+
+.main-content {
+  background-color: rgb(250, 234, 233);
+  text-align: center;
+  height: calc(100% - 100px);
+  margin-top: 10px;
+  position: relative;
+}
+
+.event-table-section {
+  padding: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+table,
+th,
+td {
+  border: none;
+  border-collapse: collapse;
+}
+
+table {
+  width: 100%;
+  background-color: rgb(245, 224, 198);
+  font-size: 20px;
+}
+
+th {
+  background-color: bisque;
+}
+
+th,
+td {
+  padding: 10px;
+  border-spacing: 5px;
+}
