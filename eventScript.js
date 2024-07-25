@@ -40,7 +40,6 @@ eventData.forEach((event) => {
   ) {
     status.textContent = "In Progress";
   }
-
   cellStatus.appendChild(status);
 
   const actionButton = document.createElement("button");
@@ -52,16 +51,3 @@ eventData.forEach((event) => {
   };
   cellAction.appendChild(actionButton);
 });
-
-function formatDate(date) {
-  let day = date.getDate();
-  if (day < 10) {
-    day = "0" + day;
-  }
-  let month = date.getMonth() + 1;
-  if (month < 10) {
-    month = "0" + month;
-  }
-  let year = date.getFullYear();
-  return day + "-" + month + "-" + year;
-}
