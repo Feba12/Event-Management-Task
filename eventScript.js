@@ -1,10 +1,8 @@
-const eventTable = document
-  .getElementById("event-table")
-  .getElementsByTagName("tbody")[0];
+const eventTableBody = document.getElementById("event-table-body");
 const eventData = JSON.parse(localStorage.getItem("EventData")) || [];
 
 eventData.forEach((event) => {
-  const row = eventTable.insertRow();
+  const row = eventTableBody.insertRow();
 
   const cellEventId = row.insertCell(0);
   const cellEventName = row.insertCell(1);
@@ -18,21 +16,52 @@ eventData.forEach((event) => {
   cellStartDate.textContent = event[2];
   cellEndDate.textContent = event[3];
 
-  const statusDropdown = document.createElement("select");
-  const statuses = ["Failed", "In Progress", "Completed"];
-  statuses.forEach((status) => {
-    const option = document.createElement("option");
-    option.value = status;
-    option.textContent = status;
-    statusDropdown.appendChild(option);
-  });
-  cellStatus.appendChild(statusDropdown);
+  console.log(new Date());
+  console.log(new Date(cellStartDate.textContent));
+
+  const status = document.createElement("label");
+  if (
+    new Date(cellStartDate.textContent) < new Date() &&
+    new Date(cellEndDate.textContent) < new Date()
+  ) {
+    status.textContent = "Failed";
+  }
+
+  if (
+    new Date(cellStartDate.textContent) > new Date() &&
+    new Date(cellEndDate.textContent) > new Date()
+  ) {
+    status.textContent = "Not Started";
+  }
+
+  if (
+    new Date(cellStartDate.textContent) < new Date() &&
+    new Date(cellEndDate.textContent) > new Date()
+  ) {
+    status.textContent = "In Progress";
+  }
+
+  cellStatus.appendChild(status);
 
   const actionButton = document.createElement("button");
   actionButton.textContent = "View Tasks";
-  actionButton.addEventListener("click", function () {
-    localStorage.setItem("SelectedEvent", event[1]);
+  actionButton.onclick = function () {
+    localStorage.setItem("SelectedEventName", event[1]);
+    localStorage.setItem("SelectedEventId", event[0]);
     window.location.href = "taskListing.html";
-  });
+  };
   cellAction.appendChild(actionButton);
 });
+
+function formatDate(date) {
+  let day = date.getDate();
+  if (day < 10) {
+    day = "0" + day;
+  }
+  let month = date.getMonth() + 1;
+  if (month < 10) {
+    month = "0" + month;
+  }
+  let year = date.getFullYear();
+  return day + "-" + month + "-" + year;
+}

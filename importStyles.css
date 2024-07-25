@@ -14,7 +14,6 @@ body {
 .logo-name,
 .listings-navigation,
 .event-navigation,
-.task-navigation,
 .selection-section p {
   display: inline-block;
 }
@@ -36,11 +35,15 @@ body {
   text-align: center;
 }
 
-.event-navigation,
-.task-navigation {
+.event-navigation {
   padding: 10px;
   margin: 20px;
   font-size: 20px;
+}
+
+a {
+  text-decoration: none;
+  color: black;
 }
 
 .headingBanner {
@@ -56,21 +59,9 @@ body {
   position: relative;
 }
 
-.import-outer-section {
-  padding: 20px;
-  vertical-align: middle;
-  text-align: center;
-}
-
 .import-inner-section {
-  border: 1px dashed;
-  border-radius: 5px;
-  background-color: azure;
-  padding: 20px;
   vertical-align: middle;
   text-align: center;
-  width: 800px;
-  height: 600px;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -78,18 +69,57 @@ body {
 }
 
 .selection-section {
+  background-color: bisque;
+  border: 1px dashed;
+  width: 600px;
+  height: 500px;
+  border-radius: 5px;
   padding: 20px;
+  margin: 20px;
   vertical-align: middle;
   text-align: center;
+  font-size: 18px;
+}
+
+.selection-section select {
+  width: 150px;
+  padding: 10px;
+  margin: 5px;
 }
 
 .import-section {
+  background-color: white;
   text-align: center;
+  padding: 40px;
+  margin: 20px;
+  font-size: 18px;
 }
 
-.submit-button button {
+.import-section img {
+  width: 80px;
+  height: 80px;
+}
+
+.import-screen {
+  text-align: center;
+  margin: 15px;
+}
+
+.upload-image{
+  padding: 15px;
+  margin: 15px;
+}
+
+.import-button {
+  padding: 0 50px 50px 50px;
+  margin: 20px;
+}
+
+.import-button button {
   margin: 5px;
   padding: 10px;
+  background-color: beige;
+  width: 150px;
   border: 1px solid;
   border-radius: 5px;
   cursor: pointer;
@@ -106,8 +136,8 @@ body {
   padding: 16px;
   position: fixed;
   left: 50%;
-  bottom: 30px;
-  font-size: 17px;
+  top: 70px;
+  font-size: 16px;
 }
 
 #snackbar.show {
@@ -117,22 +147,22 @@ body {
 
 @keyframes fadein {
   from {
-    bottom: 0;
+    top: 0;
     opacity: 0;
   }
   to {
-    bottom: 30px;
+    top: 70px;
     opacity: 1;
   }
 }
 
 @keyframes fadeout {
   from {
-    bottom: 30px;
+    top: 70px;
     opacity: 1;
   }
   to {
-    bottom: 0;
+    top: 0;
     opacity: 0;
   }
 }

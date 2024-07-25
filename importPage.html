@@ -15,33 +15,37 @@
         <div class="logo-name"><h1>Event Management</h1></div>
       </div>
       <div class="listings-navigation">
-        <div class="event-navigation">Event Listings</div>
-        <div class="task-navigation">Task Listings</div>
+        <div class="event-navigation">
+          <a href="eventListing.html">Event Listings</a>
+        </div>
       </div>
     </div>
     <div class="main-content">
-      <div class="import-outer-section">
+      <div class="import-inner-section">
         <h2>UPLOAD YOUR FILES HERE</h2>
-        <div class="import-inner-section">
-          <div class="selection-section">
-            <p>Select File Type:</p>
-            <select name="file-type" id="csv-input-type">
-              <option value="Event">Event</option>
-              <option value="Task">Task</option>
-            </select>
-          </div>
+        <div class="selection-section">
+          <p>Select File Type:</p>
+          <select name="file-type" id="csv-input-type">
+            <option value="Choose Type" hidden>Choose Type</option>
+            <option value="Event">Event</option>
+            <option value="Task">Task</option>
+          </select>
           <div class="import-section">
             <div class="import-screen">
+              <label> Select File: </label>
               <input type="file" id="csv-input" accept=".csv" />
             </div>
-            <div class="submit-button">
-              <button onclick="readFile()">Submit</button>
+            <div class="upload-image">
+              <img src="./assets/upload.png" alt="" />
+            </div>
+            <div class="import-button">
+              <button onclick="readFile()">IMPORT</button>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div id="snackbar"></div>
-    <script src="script.js"></script>
+    <script src="importScript.js"></script>
   </body>
 </html>

@@ -15,31 +15,26 @@
         <div class="logo-name"><h1>Event Management</h1></div>
       </div>
       <div class="listings-navigation">
-        <div class="home-navigation">Home</div>
-        <div class="task-navigation">Task Listings</div>
+        <div class="home-navigation"><a href="importPage.html">Home</a></div>
       </div>
     </div>
     <div class="main-content">
       <div class="event-table-section">
         <table id="event-table">
-          <tr>
-            <th>Event Id</th>
-            <th>Event Name</th>
-            <th>Start Date</th>
-            <th>End Date</th>
-            <th>Status</th>
-            <th>Action</th>
-          </tr>
-          <tr>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          <thead>
+            <tr>
+              <th>Event Id</th>
+              <th>Event Name</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="event-table-body"></tbody>
         </table>
       </div>
     </div>
+    <script src="eventScript.js"></script>
   </body>
 </html>

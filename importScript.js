@@ -1,87 +1,63 @@
-const fileInput = document.getElementById("csv-input");
+let fileInput = document.getElementById("csv-input");
+let fileType;
+let fileInputType;
 let delimiter = ",";
 let newLine = "\n";
 
-const readFile = () => {
-  if (!fileInput) {
-    let noFileFound = "Please upload a file!";
-    alertPopUp(noFileFound);
-  }
-
-  const reader = new FileReader();
-
-  reader.onload = () => {
-    localStorage.setItem("csvData", JSON.stringify(reader.result));
-  };
-
-  let content = reader.readAsText(fileInput.files[0]);
-  toTable(content);
-};
-
-function toTable(content) {
-  let rows = content.split(newLine);
-  let CSVHeader = rows.shift().split(delimiter);
-}
-
-function alertPopUp(errorMsg) {
-  var snackbar = document.getElementById("snackbar");
-  snackbar.className = "show";
-  snackbar.textContent = errorMsg;
-  setTimeout(function () {
-    snackbar.className = snackbar.className.replace("show", "");
-  }, 3000);
-}
-
-
-
-
-
-document.getElementById('csv-input').addEventListener('change', readFile);
-
 function readFile() {
-  const fileInput = document.getElementById('csv-input');
-  const fileType = document.getElementById('csv-input-type').value;
-  const file = fileInput.files[0];
-
-  if (file) {
+  let fileType = document.getElementById("csv-input-type").value;
+  let file = fileInput.files[0];
+  console.log(file);
+  if (file && file.type === "text/csv") {
     const reader = new FileReader();
-    reader.onload = function(event) {
+    reader.onload = function (event) {
       const csvData = event.target.result;
       processCSV(csvData, fileType);
     };
     reader.readAsText(file);
-  } else {
-    showSnackbar("Please select a file to upload.");
+  } else if (fileType != "Event" || fileType != "Task") {
+    alertPopUp("Please select the file type.");
+  } else if (!file) {
+    alertPopUp("Please select a file to upload.");
+    document.getElementById("csv-input").value = "";
+  } else if (file.type !== "text/csv") {
+    alertPopUp("Please upload a CSV file.");
+    document.getElementById("csv-input").value = "";
   }
 }
 
 function processCSV(data, fileType) {
-  const rows = data.split('\n');
-  const headers = rows[0].split(',');
+  const rows = data.split(newLine);
+  const headers = rows.shift().split(delimiter);
+  console.log(headers);
 
-  const expectedHeadersEvent = ['Event Id', 'Event Name', 'Start Date', 'End Date'];
-  const expectedHeadersTask = ['Task Id', 'Task Name', 'Event Name'];
+  const expectedHeadersEvent = ["id", "event_name", "start_date", "end_date"];
+  const expectedHeadersTask = ["task_id", "task_name", "event_id"];
 
   let isValid = false;
 
-  if (fileType === 'Event') {
+  if (fileType === "Event") {
     isValid = validateHeaders(headers, expectedHeadersEvent);
-  } else if (fileType === 'Task') {
+  } else if (fileType === "Task") {
     isValid = validateHeaders(headers, expectedHeadersTask);
   }
 
   if (!isValid) {
-    showSnackbar("CSV file headers do not match the expected headers.");
+    alertPopUp("CSV file headers do not match the expected headers.");
+    fileInput.value = "";
+    document.getElementById("csv-input-type").value = "Choose Type";
     return;
   }
 
   storeCSVData(fileType, rows);
-  showSnackbar("File imported successfully.", true);
+  alertPopUp("File imported successfully.");
+  fileInput.value = "";
+  document.getElementById("csv-input-type").value = "Choose Type";
 }
 
 function validateHeaders(headers, expectedHeaders) {
-  for (const expectedHeader of expectedHeaders) {
-    if (!headers.includes(expectedHeader)) {
+  for (let x of expectedHeaders) {
+    if (!headers.includes(x)) {
       return false;
     }
   }
@@ -89,16 +65,29 @@ function validateHeaders(headers, expectedHeaders) {
 }
 
 function storeCSVData(type, rows) {
-  const data = rows.slice(1).map(row => row.split(','));
-  localStorage.setItem(type + 'Data', JSON.stringify(data));
+  const data = rows.map((row) => row.split(","));
+  if (type === "Event") {
+    data.forEach((element, index) => {
+      console.log(new Date(element[2]));
+      if (new Date(element[2]) > new Date(element[3])) {
+        alertPopUp(
+          `Invalid date inputs! The start date is after the end date for the entry ${
+            index + 1
+          }.`
+        );
+      } else {
+        localStorage.setItem(type + "Data", JSON.stringify(data));
+      }
+    });
+  }
+  localStorage.setItem(type + "Data", JSON.stringify(data));
 }
 
-function showSnackbar(message, success = false) {
-  const snackbar = document.getElementById('snackbar');
+function alertPopUp(errorMsg) {
+  var snackbar = document.getElementById("snackbar");
   snackbar.className = "show";
-  snackbar.textContent = message;
-  snackbar.style.backgroundColor = success ? "green" : "red";
-  setTimeout(function() {
+  snackbar.textContent = errorMsg;
+  setTimeout(function () {
     snackbar.className = snackbar.className.replace("show", "");
   }, 3000);
 }
