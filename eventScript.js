@@ -1,87 +1,73 @@
-  const eventTableBody = document.getElementById("event-table-body");
-  const eventData = JSON.parse(localStorage.getItem("EventData")) || [];
-  const eventStatusData = JSON.parse(localStorage.getItem("EventStatusData")) || [];
+let eventTableBody = document.getElementById("event-table-body");
+let eventData = JSON.parse(localStorage.getItem("EventData")) || [];
+let taskData = JSON.parse(localStorage.getItem("TaskData")) || [];
+let eventStatusData = JSON.parse(localStorage.getItem("EventStatusData")) || [];
 
-  eventData.forEach((event, index) => {
-    const row = eventTableBody.insertRow();
+eventData.forEach((event, index) => {
+  let eventIndex = eventData.findIndex((i) => i[0] === event[0]);
+  let filteredTasks = taskData.filter((task) => task[2] === event[0]);
 
-    const cellEventId = row.insertCell(0);
-    const cellEventName = row.insertCell(1);
-    const cellStartDate = row.insertCell(2);
-    const cellEndDate = row.insertCell(3);
-    const cellStatus = row.insertCell(4);
-    const cellAction = row.insertCell(5);
+  let row = eventTableBody.insertRow();
 
-    cellEventId.textContent = event[0];
-    cellEventName.textContent = event[1];
-    cellStartDate.textContent = event[2];
-    cellEndDate.textContent = event[3];
+  let cellEventId = row.insertCell(0);
+  let cellEventName = row.insertCell(1);
+  let cellStartDate = row.insertCell(2);
+  let cellEndDate = row.insertCell(3);
+  let cellStatus = row.insertCell(4);
+  let cellAction = row.insertCell(5);
 
-    const status = document.createElement("label");
-    status.id = `status-${event[0]}`;
-    status.textContent = eventStatusData[index] || calculateInitialStatus(event);
-    cellStatus.appendChild(status);
+  cellEventId.textContent = event[0];
+  cellEventName.textContent = event[1];
+  cellStartDate.textContent = event[2];
+  cellEndDate.textContent = event[3];
 
-    const actionButton = document.createElement("button");
-    actionButton.textContent = "View Tasks";
-    actionButton.onclick = function () {
-      localStorage.setItem("SelectedEventName", event[1]);
-      localStorage.setItem("SelectedEventId", event[0]);
+  let status = document.createElement("label");
+  status.id = `status-${event[0]}`;
+  
+  status.textContent = eventStatusData[index] || calculateInitialStatus(event);
+  cellStatus.appendChild(status);
+
+  if (eventStatusData[index] ) {
+    eventStatusData[eventIndex] = calculateInitialStatus(event);
+    localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
+  }
+
+  let actionButton = document.createElement("button");
+  actionButton.textContent = "View Tasks";
+  actionButton.classList.add("actionButton");
+  actionButton.onclick = function () {
+    localStorage.setItem("SelectedEventName", event[1]);
+    localStorage.setItem("SelectedEventId", event[0]);
+    if (taskData.length === 0 || !taskData) {
+      alertPopUp("Please import the task file first!");
+    } else if (filteredTasks.length === 0) {
+      alertPopUp("No Tasks assigned for this event");
+    } else {
       window.location.href = "taskListing.html";
-    };
-    cellAction.appendChild(actionButton);
-  });
+    }
+  };
+  cellAction.appendChild(actionButton);
+});
 
 function calculateInitialStatus(event) {
-  const startDate = new Date(event[2]);
-  const endDate = new Date(event[3]);
-  const currentDate = new Date();
+  let startDate = new Date(event[2]);
+  let endDate = new Date(event[3]);
+  let currentDate = new Date();
 
   if (startDate < currentDate && endDate < currentDate) {
     return "Failed";
   } else if (startDate > currentDate && endDate > currentDate) {
     return "Not Started";
-  } else if (startDate < currentDate && endDate > currentDate) {
+  } else if (startDate <= currentDate && endDate >= currentDate) {
     return "In Progress";
   }
-  return "Unknown";
 }
 
-function updateEventStatus(eventId) {
-  const eventData = JSON.parse(localStorage.getItem("EventData")) || [];
-  const taskData = JSON.parse(localStorage.getItem("TaskData")) || [];
-  const taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
-  const eventStatusData = JSON.parse(localStorage.getItem("EventStatusData")) || [];
-
-  const eventIndex = eventData.findIndex(event => event[0] === eventId);
-  const tasksForEvent = taskData.filter(task => task[2] === eventId);
-
-  let status = 'Not Started';
-  let inProgressCount = 0;
-  let completedCount = 0;
-
-  tasksForEvent.forEach(task => {
-    const taskId = task[0];
-    const taskStatus = taskStatusData[taskId] || 'Not Started';
-
-    if (taskStatus === 'In Progress') {
-      inProgressCount++;
-    } else if (taskStatus === 'Completed') {
-      completedCount++;
-    }
-  });
-
-  if (inProgressCount == 1) {
-    status = 'In Progress';
-  } else if (completedCount === tasksForEvent.length) {
-    status = 'Completed';
-  }
-
-  eventStatusData[eventIndex] = status;
-  localStorage.setItem('EventStatusData', JSON.stringify(eventStatusData));
-
-  const statusLabel = document.getElementById(`status-${eventId}`);
-  if (statusLabel) {
-    statusLabel.textContent = status;
-  }
+function alertPopUp(errorMsg) {
+  var popUp = document.getElementById("pop-up");
+  popUp.className = "show";
+  popUp.textContent = errorMsg;
+  setTimeout(function () {
+    popUp.className = popUp.className.replace("show", "");
+  }, 3000);
 }

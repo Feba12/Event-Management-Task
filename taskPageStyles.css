@@ -96,3 +96,63 @@ td {
   padding: 10px;
   border-spacing: 5px;
 }
+
+.statusDropDown {
+  padding: 5px;
+}
+
+.done {
+  text-align: center;
+}
+
+#done-button {
+  padding: 10px;
+  background-color: green;
+  border: 1px solid;
+  border-radius: 5px;
+  width: 120px;
+  color: white;
+  cursor: pointer;
+}
+
+#pop-up {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 2px;
+  padding: 16px;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 90px;
+  font-size: 16px;
+}
+
+#pop-up.show {
+  visibility: visible;
+  animation: fadein 0.5s, fadeout 0.5s 2.5s;
+}
+
+@keyframes fadein {
+  from {
+    top: 0;
+    opacity: 0;
+  }
+  to {
+    top: 90px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeout {
+  from {
+    top: 90px;
+    opacity: 1;
+  }
+  to {
+    top: 0;
+    opacity: 0;
+  }
+}

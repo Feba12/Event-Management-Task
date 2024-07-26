@@ -1,6 +1,11 @@
 let fileInput = document.getElementById("csv-input");
+let eventData = JSON.parse(localStorage.getItem("EventData")) || [];
 let fileType;
 let fileInputType;
+let progressCount;
+let indexOfFirstOccurence;
+let listOfEventsInTask;
+let eventIdList;
 let delimiter = ",";
 let newLine = "\n";
 
@@ -24,43 +29,40 @@ function readFile() {
     return;
   }
 
-  const reader = new FileReader();
+  let reader = new FileReader();
   reader.onload = function (event) {
-    const csvData = event.target.result;
+    let csvData = event.target.result;
     processCSV(csvData, fileType);
   };
   reader.readAsText(file);
 }
 
 function processCSV(data, fileType) {
-  const rows = data.split(newLine);
-  const headers = rows
+  let rows = data.split(newLine);
+  let headers = rows
     .shift()
     .split(delimiter)
     .map((header) => header.trim());
-  console.log(headers);
 
-  const expectedHeadersEvent = ["id", "event_name", "start_date", "end_date"];
-  const expectedHeadersTask = ["task_id", "task_name", "event_id"];
+  let expectedHeadersEvent = ["id", "event_name", "start_date", "end_date"];
+  let expectedHeadersTask = ["task_id", "task_name", "event_id"];
 
-  let isValid = false;
+  let isValidHeader = false;
 
   if (fileType === "Event") {
-    isValid = validateHeaders(headers, expectedHeadersEvent);
+    isValidHeader = validateHeaders(headers, expectedHeadersEvent);
   } else if (fileType === "Task") {
-    isValid = validateHeaders(headers, expectedHeadersTask);
+    isValidHeader = validateHeaders(headers, expectedHeadersTask);
   }
 
-  if (!isValid) {
+  if (!isValidHeader) {
     alertPopUp("CSV file headers do not match the expected headers.");
-    fileInput.value = "";
-    document.getElementById("csv-input-type").value = "Choose Type";
+    resetFields();
     return;
   }
 
   storeCSVData(fileType, rows);
-  fileInput.value = "";
-  document.getElementById("csv-input-type").value = "Choose Type";
+  resetFields();
 }
 
 function validateHeaders(headers, expectedHeaders) {
@@ -73,13 +75,17 @@ function validateHeaders(headers, expectedHeaders) {
 }
 
 function storeCSVData(type, rows) {
-  const data = rows.map((row) =>
-    row.split(delimiter).map((cell) => cell.trim())
-  );
-  const validData = [];
+  let data = rows.map((row) => row.split(delimiter).map((cell) => cell.trim()));
+  let validData = [];
+  eventIdList = [];
+  progressCount = 0;
   let isValidData = true;
-
+  eventData.forEach((event) => {
+    eventIdList.push(event[0]);
+  });
+  
   if (type === "Event") {
+    localStorage.clear();
     data.forEach((element, index) => {
       if (element.includes("") || element.length !== 4) {
         alertPopUp(
@@ -89,8 +95,10 @@ function storeCSVData(type, rows) {
         return;
       }
 
-      const startDate = new Date(element[2]);
-      const endDate = new Date(element[3]);
+      let startDate = new Date(element[2]);
+      let endDate = new Date(element[3]);
+      let currentDate = new Date();
+
       if (startDate > endDate) {
         alertPopUp(
           `Invalid date inputs! The start date is after the end date for the entry ${
@@ -101,9 +109,26 @@ function storeCSVData(type, rows) {
         return;
       }
 
+      if (startDate <= currentDate && endDate >= currentDate) {
+        progressCount += 1;
+      }
+
+      if (progressCount == 1) {
+        indexOfFirstOccurence = `${index + 1}`;
+      }
+
+      if (progressCount > 1) {
+        alertPopUp(
+          `No two events can be in progress state at a time. There's already an event in progress entered in the entry ${indexOfFirstOccurence}. Reschedule and upload the file!`
+        );
+        isValidData = false;
+        return;
+      }
+
       validData.push(element);
     });
   } else if (type === "Task") {
+    listOfEventsInTask = [];
     data.forEach((element, index) => {
       if (element.includes("") || element.length !== 3) {
         alertPopUp(
@@ -113,8 +138,17 @@ function storeCSVData(type, rows) {
         return;
       }
 
+      listOfEventsInTask.push(element[2]);
       validData.push(element);
     });
+
+    for (let x in listOfEventsInTask) {
+      if (!eventIdList.includes(listOfEventsInTask[x])) {
+        alertPopUp(
+          "There are tasks for the events not mentioned in the Event CSV."
+        );
+      }
+    }
   }
 
   if (isValidData) {
@@ -124,10 +158,15 @@ function storeCSVData(type, rows) {
 }
 
 function alertPopUp(errorMsg) {
-  var snackbar = document.getElementById("snackbar");
-  snackbar.className = "show";
-  snackbar.textContent = errorMsg;
+  var popUp = document.getElementById("pop-up");
+  popUp.className = "show";
+  popUp.textContent = errorMsg;
   setTimeout(function () {
-    snackbar.className = snackbar.className.replace("show", "");
+    popUp.className = popUp.className.replace("show", "");
   }, 3000);
+}
+
+function resetFields() {
+  fileInput.value = "";
+  document.getElementById("csv-input-type").value = "Choose Type";
 }

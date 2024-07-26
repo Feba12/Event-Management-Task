@@ -125,10 +125,9 @@ a {
   cursor: pointer;
 }
 
-#snackbar {
+#pop-up {
   visibility: hidden;
   min-width: 250px;
-  margin-left: -125px;
   background-color: #333;
   color: #fff;
   text-align: center;
@@ -136,11 +135,12 @@ a {
   padding: 16px;
   position: fixed;
   left: 50%;
-  top: 70px;
+  transform: translateX(-50%);
+  top: 90px;
   font-size: 16px;
 }
 
-#snackbar.show {
+#pop-up.show {
   visibility: visible;
   animation: fadein 0.5s, fadeout 0.5s 2.5s;
 }
@@ -151,14 +151,14 @@ a {
     opacity: 0;
   }
   to {
-    top: 70px;
+    top: 90px;
     opacity: 1;
   }
 }
 
 @keyframes fadeout {
   from {
-    top: 70px;
+    top: 90px;
     opacity: 1;
   }
   to {
