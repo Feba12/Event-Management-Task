@@ -46,10 +46,11 @@ if (eventId) {
     cellStatus.appendChild(statusDropdown);
   });
   disableInProgressOptions();
-  doneButtonFunction();
   if (eventStatusData[eventIndex] == "Failed") {
     failedEventStatusUpdate();
   }
+  updateEventStatus(localStorage.getItem("SelectedEventId"));
+  doneButtonFunction();
 }
 
 function taskStatusSetter(selectedOption, taskId) {
@@ -120,7 +121,10 @@ function updateEventStatus(eventId) {
   let duplicateInProgressInEvent = false;
   if (eventStatusData[eventIndex] !== "Failed") {
     duplicateInProgressInEvent = disableDuplicateInProgressInEvent(eventIndex);
-    if (!duplicateInProgressInEvent) {
+    if (
+      !duplicateInProgressInEvent ||
+      eventStatusData[eventIndex] !== "In Progress"
+    ) {
       eventStatusData[eventIndex] = status;
       localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
 
@@ -129,8 +133,6 @@ function updateEventStatus(eventId) {
         statusLabel.textContent = status;
       }
     }
-  } else if (eventStatusData[eventIndex] == "Failed") {
-    failedEventStatusUpdate();
   }
 }
 
@@ -158,6 +160,7 @@ function disableDuplicateInProgressInEvent(eventIndex) {
     ) {
       inProgressFound = true;
       alertPopUp("There's already an event in Progress in the event list");
+      failedEventStatusUpdate();
       return inProgressFound;
     }
   }
