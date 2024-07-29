@@ -2,19 +2,21 @@ let eventId = localStorage.getItem("SelectedEventId");
 let eventName = localStorage.getItem("SelectedEventName");
 let eventNameValue = document.getElementById("event-name-value");
 let doneButton = document.getElementById("done-button");
+let eventData = JSON.parse(localStorage.getItem("EventData")) || [];
+let taskData = JSON.parse(localStorage.getItem("TaskData")) || [];
+let eventStatusData = JSON.parse(localStorage.getItem("EventStatusData")) || [];
+let taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
+let taskTableBody = document.getElementById("task-table-body");
+let eventIndex = eventData.findIndex((event) => event[0] === eventId);
+let tasksForEvent = taskData.filter((task) => task[2] === eventId);
+
 if (!eventName) {
   eventNameValue.textContent = "No event selected";
 }
 eventNameValue.textContent = eventName;
 
 if (eventId) {
-  let taskData = JSON.parse(localStorage.getItem("TaskData")) || [];
-  let taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
-  let filteredTasks = taskData.filter((task) => task[2] === eventId);
-
-  let taskTableBody = document.getElementById("task-table-body");
-
-  filteredTasks.forEach((task) => {
+  tasksForEvent.forEach((task) => {
     let row = taskTableBody.insertRow();
 
     let cellTaskId = row.insertCell(0);
@@ -39,23 +41,18 @@ if (eventId) {
       if (taskStatusData[task[0]] === status) {
         option.selected = true;
       }
-
       statusDropdown.appendChild(option);
     });
     cellStatus.appendChild(statusDropdown);
   });
   disableInProgressOptions();
-  doneButton.onclick = function () {
-    updateEventStatus(localStorage.getItem("SelectedEventId"));
-    window.location.href = "eventListing.html";
-  };
+  doneButtonFunction();
+  updateEventStatus(localStorage.getItem("SelectedEventId"));
 }
 
 function taskStatusSetter(selectedOption, taskId) {
-  let taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
   taskStatusData[taskId] = selectedOption.value;
   localStorage.setItem("TaskStatusData", JSON.stringify(taskStatusData));
-
   disableInProgressOptions();
 }
 
@@ -84,19 +81,18 @@ function disableInProgressOptions() {
   }
 }
 
+function doneButtonFunction() {
+  doneButton.onclick = function () {
+    updateEventStatus(localStorage.getItem("SelectedEventId"));
+    window.location.href = "eventListing.html";
+  };
+}
+
 function updateEventStatus(eventId) {
-  let eventData = JSON.parse(localStorage.getItem("EventData")) || [];
-  let taskData = JSON.parse(localStorage.getItem("TaskData")) || [];
-  let taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
-  let eventStatusData =
-    JSON.parse(localStorage.getItem("EventStatusData")) || [];
-
-  let eventIndex = eventData.findIndex((event) => event[0] === eventId);
-  let tasksForEvent = taskData.filter((task) => task[2] === eventId);
-
   let status = "Not Started";
-  let inProgressCount = 0;
-  let completedCount = 0;
+  let inProgressCount,
+    completedCount,
+    notStartedCount = 0;
 
   tasksForEvent.forEach((task) => {
     let taskId = task[0];
@@ -106,22 +102,44 @@ function updateEventStatus(eventId) {
       inProgressCount++;
     } else if (taskStatus === "Completed") {
       completedCount++;
+    } else {
+      notStartedCount++;
     }
   });
 
   if (inProgressCount == 1) {
     status = "In Progress";
+  } else if (
+    (notStartedCount >= 1 && completedCount >= 1) ||
+    (notStartedCount >= 1 && inProgressCount >= 1)
+  ) {
+    status = "In Progress";
   } else if (completedCount === tasksForEvent.length) {
     status = "Completed";
   }
 
-  if (!eventStatusData[eventIndex] == "Failed") {
+  if (eventStatusData[eventIndex] !== "Failed") {
     eventStatusData[eventIndex] = status;
     localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
 
     let statusLabel = document.getElementById(`status-${eventId}`);
     if (statusLabel) {
       statusLabel.textContent = status;
+    }
+  } else if (eventStatusData[eventIndex] == "Failed") {
+    failedEventStatusUpdate();
+  }
+}
+
+function failedEventStatusUpdate() {
+  for (i = 0; i < taskTableBody.rows.length; i++) {
+    let row = taskTableBody.rows[i];
+    let statusDropdown = row.cells[2].querySelector("select");
+
+    for (j = 0; j < statusDropdown.options.length; j++) {
+      if (statusDropdown.options[j].value === "In Progress") {
+        statusDropdown.options[j].disabled = true;
+      }
     }
   }
 }

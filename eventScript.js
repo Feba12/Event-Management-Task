@@ -27,7 +27,7 @@ eventData.forEach((event, index) => {
   status.textContent = eventStatusData[index] || calculateInitialStatus(event);
   cellStatus.appendChild(status);
 
-  if (eventStatusData[index] ) {
+  if (eventStatusData[index] == null ) {
     eventStatusData[eventIndex] = calculateInitialStatus(event);
     localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
   }
