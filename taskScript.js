@@ -47,7 +47,9 @@ if (eventId) {
   });
   disableInProgressOptions();
   doneButtonFunction();
-  updateEventStatus(localStorage.getItem("SelectedEventId"));
+  if (eventStatusData[eventIndex] == "Failed") {
+    failedEventStatusUpdate();
+  }
 }
 
 function taskStatusSetter(selectedOption, taskId) {
@@ -90,9 +92,9 @@ function doneButtonFunction() {
 
 function updateEventStatus(eventId) {
   let status = "Not Started";
-  let inProgressCount,
-    completedCount,
-    notStartedCount = 0;
+  let inProgressCount = 0;
+  let completedCount = 0;
+  let notStartedCount = 0;
 
   tasksForEvent.forEach((task) => {
     let taskId = task[0];
@@ -109,22 +111,23 @@ function updateEventStatus(eventId) {
 
   if (inProgressCount == 1) {
     status = "In Progress";
-  } else if (
-    (notStartedCount >= 1 && completedCount >= 1) ||
-    (notStartedCount >= 1 && inProgressCount >= 1)
-  ) {
+  } else if (notStartedCount >= 1 && completedCount >= 1) {
     status = "In Progress";
   } else if (completedCount === tasksForEvent.length) {
     status = "Completed";
   }
 
+  let duplicateInProgressInEvent = false;
   if (eventStatusData[eventIndex] !== "Failed") {
-    eventStatusData[eventIndex] = status;
-    localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
+    duplicateInProgressInEvent = disableDuplicateInProgressInEvent(eventIndex);
+    if (!duplicateInProgressInEvent) {
+      eventStatusData[eventIndex] = status;
+      localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
 
-    let statusLabel = document.getElementById(`status-${eventId}`);
-    if (statusLabel) {
-      statusLabel.textContent = status;
+      let statusLabel = document.getElementById(`status-${eventId}`);
+      if (statusLabel) {
+        statusLabel.textContent = status;
+      }
     }
   } else if (eventStatusData[eventIndex] == "Failed") {
     failedEventStatusUpdate();
@@ -140,6 +143,22 @@ function failedEventStatusUpdate() {
       if (statusDropdown.options[j].value === "In Progress") {
         statusDropdown.options[j].disabled = true;
       }
+    }
+  }
+}
+
+function disableDuplicateInProgressInEvent(eventIndex) {
+  let eventStatusData =
+    JSON.parse(localStorage.getItem("EventStatusData")) || [];
+  let inProgressFound = false;
+  for (let event in eventStatusData) {
+    if (
+      eventStatusData[event] === "In Progress" &&
+      eventStatusData[eventIndex] !== "In Progress"
+    ) {
+      inProgressFound = true;
+      alertPopUp("There's already an event in Progress in the event list");
+      return inProgressFound;
     }
   }
 }
