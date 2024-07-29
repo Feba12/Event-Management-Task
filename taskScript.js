@@ -10,9 +10,6 @@ let taskTableBody = document.getElementById("task-table-body");
 let eventIndex = eventData.findIndex((event) => event[0] === eventId);
 let tasksForEvent = taskData.filter((task) => task[2] === eventId);
 
-if (!eventName) {
-  eventNameValue.textContent = "No event selected";
-}
 eventNameValue.textContent = eventName;
 
 if (eventId) {
@@ -45,7 +42,7 @@ if (eventId) {
     });
     cellStatus.appendChild(statusDropdown);
   });
-  disableInProgressOptionsOnOneSelectedOptionAsInProgress();
+  disableInProgressOptionsIfOneSelectedOptionIsInProgress();
   if (eventStatusData[eventIndex] == "Failed") {
     disableInProgressOption();
   }
@@ -56,10 +53,10 @@ if (eventId) {
 function taskStatusSetter(selectedOption, taskId) {
   taskStatusData[taskId] = selectedOption.value;
   localStorage.setItem("TaskStatusData", JSON.stringify(taskStatusData));
-  disableInProgressOptionsOnOneSelectedOptionAsInProgress();
+  disableInProgressOptionsIfOneSelectedOptionIsInProgress();
 }
 
-function disableInProgressOptionsOnOneSelectedOptionAsInProgress() {
+function disableInProgressOptionsIfOneSelectedOptionIsInProgress() {
   let taskTableBody = document.getElementById("task-table-body");
   let taskStatusData = JSON.parse(localStorage.getItem("TaskStatusData")) || {};
   let inProgressFound = false;

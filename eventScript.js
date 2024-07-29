@@ -5,6 +5,7 @@ let eventStatusData = JSON.parse(localStorage.getItem("EventStatusData")) || [];
 
 eventData.forEach((event, index) => {
   let eventIndex = eventData.findIndex((i) => i[0] === event[0]);
+  //filter the tasks based on the eventIds
   let filteredTasks = taskData.filter((task) => task[2] === event[0]);
 
   let row = eventTableBody.insertRow();
@@ -23,11 +24,12 @@ eventData.forEach((event, index) => {
 
   let status = document.createElement("label");
   status.id = `status-${event[0]}`;
-  
+
   status.textContent = eventStatusData[index] || calculateInitialStatus(event);
   cellStatus.appendChild(status);
 
-  if (eventStatusData[index] == null ) {
+  //update the eventStatusData in the local storage with the initialStatus of each events
+  if (eventStatusData[index] == null) {
     eventStatusData[eventIndex] = calculateInitialStatus(event);
     localStorage.setItem("EventStatusData", JSON.stringify(eventStatusData));
   }
@@ -38,9 +40,12 @@ eventData.forEach((event, index) => {
   actionButton.onclick = function () {
     localStorage.setItem("SelectedEventName", event[1]);
     localStorage.setItem("SelectedEventId", event[0]);
+    //checks if the task data csv is imported before moving to the task list page
     if (taskData.length === 0 || !taskData) {
       alertPopUp("Please import the task file first!");
-    } else if (filteredTasks.length === 0) {
+    }
+    //shows a message if no task is assigned for an event
+    else if (filteredTasks.length === 0) {
       alertPopUp("No Tasks assigned for this event");
     } else {
       window.location.href = "taskListing.html";
@@ -54,11 +59,16 @@ function calculateInitialStatus(event) {
   let endDate = new Date(event[3]);
   let currentDate = new Date();
 
+  //if date is already over compared to current date
   if (startDate < currentDate && endDate < currentDate) {
     return "Failed";
-  } else if (startDate > currentDate && endDate > currentDate) {
+  }
+  //if date has not yet come
+  else if (startDate > currentDate && endDate > currentDate) {
     return "Not Started";
-  } else if (startDate <= currentDate && endDate >= currentDate) {
+  }
+  //if current date falls between the start date and end date of the event
+  else if (startDate <= currentDate && endDate >= currentDate) {
     return "In Progress";
   }
 }
